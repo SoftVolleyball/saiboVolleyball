@@ -306,8 +306,8 @@ void showAllPlayer() {
     printf("\n\n-------------\n");
     for(int i = 0; i < allPlayers.size(); i++) {
         std::cout << allPlayers[i].name << "|" << allPlayers[i].position << "|" << (allPlayers[i].gender ? "男" : "女") << "\n";
-        printf("扣球:%d|拦网:%d|发球:%d|传球:%d|调整:%d|耐力:%d\n", allPlayers[i].spike, allPlayers[i].block, allPlayers[i].serve, allPlayers[i].pass, allPlayers[i].adjust, allPlayers[i].stamina);
-        printf("抗压:%d|专注:%d|自信:%d|团队:%d|压力:%d\n", allPlayers[i].mental.pressureResist, allPlayers[i].mental.concentration, allPlayers[i].mental.confidence, allPlayers[i].mental.commu_and_teamwork, allPlayers[i].mental.teampressure);
+        printf("扣球:%d|拦网:%d|发球:%d|传球:%d|防守:%d|调整:%d\n", allPlayers[i].spike, allPlayers[i].block, allPlayers[i].serve, allPlayers[i].pass, allPlayers[i].defense, allPlayers[i].adjust);
+        printf("耐力:%d|抗压:%d|专注:%d|自信:%d|团队:%d|压力:%d\n", allPlayers[i].stamina, allPlayers[i].mental.pressureResist, allPlayers[i].mental.concentration, allPlayers[i].mental.confidence, allPlayers[i].mental.commu_and_teamwork, allPlayers[i].mental.teampressure);
         printf("-------------\n");
     }
     system("pause");
