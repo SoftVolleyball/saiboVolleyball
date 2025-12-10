@@ -51,6 +51,8 @@
 
 目前的players.txt已经按正确格式预设了两支队伍。
 
+你可以在config.h中手动设置PRE_SEED作为随机数种子，来实现两次完全一样的比赛。若未设置，则随机生成的种子将会保存在/cmake-build-debug/seeds.txt的最新一行。
+
 ## 更新日志
 
 #### 25.12.2 by yaorz26

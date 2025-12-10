@@ -11,10 +11,12 @@
 
 #define USE_PRESET_INPUT 1                // 使用预设的球员输入
 
+#define PRE_SEED 0                        // 设置种子（0为不设置）
+
 // ============ 全局调试开关 ============
 // 设为1启用调试信息，设为0禁用
 
-#define DEBUG_ALL 1  // 主开关，设为1启用所有调试信息
+#define DEBUG_ALL 0  // 主开关，设为1启用所有调试信息
 
 // 各模块调试开关
 #define DEBUG_BLOCK (DEBUG_ALL || 0)       // 拦网模块

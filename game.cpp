@@ -11,6 +11,8 @@
 #include <cstdlib>
 #include <ctime>
 #include <algorithm>
+#include <fstream>
+#include <sstream>
 
 
 int processRallyFromReceive(GameState& game, int attackingTeam, int defendingTeam, const ReceiveResult& receiveResult);
@@ -627,7 +629,15 @@ void newGame() {
         game.rotateB[0] = 6;
     }
 
-    srand(time(0));
+    if(PRE_SEED == 0) {
+        int seed = time(0);
+        srand(seed);
+        std::ofstream ofs("seeds.txt", std::ios::app);
+        ofs << seed << std::endl;
+        ofs.close();
+    } else {
+        srand(PRE_SEED);
+    }
 
     // 打满三局
     int winnerSetA = 0, winnerSetB = 0;
