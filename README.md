@@ -60,9 +60,9 @@
 $$
 x =
 \begin{cases}
-x\times0.4 & x \leq 50 \\
-1.5\times x-55 & 50 < x \leq 90 \\
-2\times x-100 & x > 90
+0.4x & x \leq 50 \\
+1.5x-55 & 50 < x \leq 90 \\
+2x-100 & x > 90
 \end{cases}
 $$
 
@@ -204,6 +204,102 @@ qua=
 $$
 
 ### 三、二传部分
+
+**1.决策传球对象**
+
+（1）当一传质量为$perfect$时： 
+
+在前排主攻、后排主攻、前排副攻、接应中，排序选取进攻效果值$eff$最高的。
+
+$$
+eff=blockBonus + positionBonus + 0.1\times STM
+$$
+
+其中$blockBonus$的计算方式为：  
+寻找进攻者对应的对方单个拦网人（前排攻手为对方对应位置拦网人，后排主攻进攻为对方前排副攻拦网，后排接应进攻为对方前排主攻拦网）；  
+$blockBonus=(\max(-1,\min(1,(SPK-BLK)/100)) + 1)\times27.5$  
+其中$SPK$为传球目标扣球属性，$BLK$为对应拦网人拦网属性  
+特别的，进攻者为女生且对应拦网者为男生，则$blockBonus$记为最大值$55$  
+
+其中$positionBonus$的计算方式为：
+$$
+positionBonus=
+\begin{cases}
+35 & 前排副攻或前排接应 \\
+30 & 前排主攻 \\
+12 & 后排主攻 \\
+10 & 后排接应 \\
+\end{cases}
+$$
+特别的，若选的是副攻，副攻最终的$eff$乘以$1.2$
+
+（2）当一传质量为$good$时：
+
+若接应在前排：$55\%$概率前排主攻，$35\%$概率前排接应，$10\%$概率后排主攻，$10\%$概率二次。
+
+若接应在后排：$70\%$概率前排主攻，$10\%$概率后排接应，$10\%$概率后排主攻，$10\%$概率二次。
+
+（3）当一传质量为$bad$时：
+
+若接应在前排：$40\%$概率调整攻（主攻），$30\%$概率前排接应，$10\%$概率后排主攻，$20\%$概率二次。
+
+若接应在后排：$60\%$概率调整攻（主攻），$10\%$概率后排接应，$10\%$概率后排主攻，$20\%$概率二次。
+
+**2.计算传球属性值**
+
+传球影响系数$adj$
+$$
+\begin{aligned}
+adj&=1.0 \times \sqrt[4]{(STM/100)} \times (1.0-(matchNum-1)\times 0.1) \\
+&\times(0.85+0.3\times PRS / 100) \\
+&\times (0.85 + 0.3\times CON / 100) \\
+&\times (0.9 + 0.2\times TMW / 100) \\
+&\times (1.0+(0.3+(100-qua)\times 0.4)\times (ADJ / 100))
+\end{aligned}
+$$
+
+$$adj=\max(adj,0.3)$$
+其中$qua$为一传质量，$ADJ$为二传调整属性。
+
+传球质量值$passQua$为：
+
+$$passQua=PAS\times adj\times \sqrt{qua/100} \ / \  diffFactor + (rand()\%20 - 10)$$
+
+$$passQua=\lfloor \max(0, passQua) \rfloor$$
+
+其中$PAS$为二传传球属性，$diffFactor$为：
+
+$$
+diffFactor=
+\begin{cases}
+1.4 & 前排副攻 \\
+1.4 & 后排主攻 \\
+1.2 & 接应 \\
+1.0 & 前排主攻(非调整攻) \\
+0.8 & 调整攻
+\end{cases}
+$$
+
+$passQua$小于$50$时，视为传球失误，直接失分。
+
+**3.计算二次进攻属性**
+
+（1）决策二次进攻类型  
+
+$$
+result=
+\begin{cases}
+扣球 & (rand() \% 100 / 100) < spike /(spike+tip) \\
+吊球 & (rand() \% 100 / 100) \geq spike /(spike+tip)
+\end{cases}
+$$
+
+其中：
+$$spike=(SPK \times 0.7 + PRS\times0.3)\times0.7$$
+$$tip = PAS\times 0.6 + WIS\times0.4$$
+其中$SPK$为二传扣球属性，$WIS$为二传球商属性。
+
+（2）计算二次进攻强度
 
 ### 四、扣球部分
 

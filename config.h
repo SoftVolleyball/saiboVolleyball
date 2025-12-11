@@ -73,7 +73,7 @@
 #define SET_BACK_ATTACK_DIFF_RATE 1.4
 #define SET_OPPOSITE_DIFF_RATE 1.2
 #define SET_FRONT_SPIKER_DIFF_RATE 1.0
-#define SET_ADJUST_ATTACK_DIFF_RATE 1.1
+#define SET_ADJUST_ATTACK_DIFF_RATE 0.8
 
 // ------------ 扣球部分 ------------
 /*各策略属性系数：

@@ -91,7 +91,7 @@ double Setter::calculateDumpAdjustment(const ReceiveResult& receiveResult) {
     double adjustment = 1.0;
 
     // 耐力影响
-    double staminaEffect = setter.stamina / 100.0;
+    double staminaEffect = sqrt(sqrt(setter.stamina / 100.0));
     double setFatigue = 1.0 - (gameState.setNum - 1) * 0.1;
     adjustment *= staminaEffect * setFatigue;
 
@@ -144,7 +144,7 @@ double Setter::calculateAttackerEffectiveness(const Player& attacker, int positi
     int blockPosition = -1;
     if (position >= 1 && position <= 3) { // 前排进攻
         // 对应位置的拦网手
-        blockPosition = position;
+        blockPosition = 4 - position;
     } else { // 后排进攻
         // 根据攻手类型选择对应的拦网者
         if ((attacker.position == "OH" || attacker.position == "主攻") && (position == 0 || position == 4 || position == 5)) {
@@ -242,6 +242,8 @@ double Setter::calculateAttackerEffectiveness(const Player& attacker, int positi
             matchupAdvantage = std::max(-1.0, std::min(1.0, matchupAdvantage));
             // 转换为得分（55分满分）
             matchupAdvantage = (matchupAdvantage + 1.0) * 27.5;
+        } else if(attacker.gender == 0 && blocker.gender == 1) {
+            matchupAdvantage = 55.0; // 对手男生不能拦女生，最大优势
         } else {
             matchupAdvantage = 55.0; // 对手无拦网能力，最大优势
         }
@@ -260,7 +262,7 @@ double Setter::calculateAttackerEffectiveness(const Player& attacker, int positi
         }
     } else { // 后排位置
         // 后排位置基础优势较低，但不同后排位置有差异
-        if (position == 0) { // 后排主攻位置
+        if (position == 5) { // 后排主攻
             positionBonus = 12.0;
         } else { // 其他后排位置
             positionBonus = 10.0;
@@ -562,7 +564,6 @@ PassQuality Setter::calculatePassQuality(const ReceiveResult& receiveResult, Pas
 
     // 一传质量影响
     double receiveInfluence = sqrt(receiveResult.qualityValue / 100.0);
-
     // 传球难度系数（不同目标难度不同）
     double difficultyFactor = 1.0;
     std::string difficultyStr = "标准";
@@ -598,7 +599,7 @@ PassQuality Setter::calculatePassQuality(const ReceiveResult& receiveResult, Pas
     // 添加随机因素
     double randomFactor = (rand() % 20 - 10);
     passValue += randomFactor;
-    passValue = std::max(0.0, std::min(100.0, passValue));
+    passValue = std::max(0.0, passValue);
 
     qualityValue = static_cast<int>(passValue);
 
@@ -622,7 +623,7 @@ PassQuality Setter::calculatePassQuality(const ReceiveResult& receiveResult, Pas
     std::cout << "传球难度系数: " << difficultyFactor << " (" << difficultyStr << ")" << std::endl;
     std::cout << "计算: " << basePassAbility << " * " << adjustment << " * " << receiveInfluence << " / " << difficultyFactor << " = " << basePassAbility * adjustment * receiveInfluence / difficultyFactor << std::endl;
     std::cout << "随机因素: " << randomFactor << std::endl;
-    std::cout << "传球质量值: " << passValue << " (四舍五入: " << qualityValue << ")" << std::endl;
+    std::cout << "传球质量值: " << passValue << " (取整: " << qualityValue << ")" << std::endl;
     std::cout << "传球质量等级: ";
     switch(quality) {
         case PERFECT_PASS: std::cout << "完美传球"; break;
