@@ -135,10 +135,12 @@ int processRallyFromServe(GameState& game) {
     #endif
 
     // 2. 接一
-    ReceiveResult receiveResult = simulateReceive(game, attackingTeam, serveResult.effectiveness);
+
+    ReceiveServe receiveServe(game, attackingTeam, serveResult.effectiveness);
+    ReceiveResult receiveResult = receiveServe.simulate();
 
     // 显示接一阵型信息
-    ReceiveFormation formation = getReceiveFormation(game, attackingTeam);
+    ReceiveFormation formation = receiveServe.getReceiveFormation();
     std::string formationStr = (formation == FORMATION_4_PLAYER) ? "4人接一" : "3人接一";
     printf("%s队采用%s阵型\n", (attackingTeam == 0) ? "A" : "B", formationStr.c_str());
 

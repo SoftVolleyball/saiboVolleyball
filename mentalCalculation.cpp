@@ -62,6 +62,9 @@ PlayerStateAdjustments calculatePlayerStateAdjustments(
     total *= std::pow(adjustments.concentrationEffect, concentrationWeight);
     total *= std::pow(adjustments.communicationEffect, communicationWeight);
 
+    total *= (1.0 + double(rand() % 20 - 10) / 100.0);
+
+
     adjustments.totalAdjustment = total;
 
     return adjustments;

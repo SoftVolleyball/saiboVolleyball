@@ -53,6 +53,164 @@
 
 你可以在config.h中手动设置PRE_SEED作为随机数种子，来实现两次完全一样的比赛。若未设置，则随机生成的种子将会保存在/cmake-build-debug/seeds.txt的最新一行。
 
+## 详细数值计算细节
+
+输入数据时，对于发球、扣球、拦网、传球和防守五大属性，进行分散调整，调整细节如下：
+
+$$
+x =
+\begin{cases}
+x\times0.4 & x \leq 50 \\
+1.5\times x-55 & 50 < x \leq 90 \\
+2\times x-100 & x > 90
+\end{cases}
+$$
+
+### 一、发球部分
+
+**1.发球决策**  
+$$
+\begin{aligned}
+Q&=(SRV/100 \times 0.75 + CFD/100 \times 0.25)\times0.4 \\
+&+CON/100\times0.2 \\
+&+SIT\times0.2 \\
+&+(1-PRS/100)\times0.1 \\
+&+STM/100\times(1-(matchNum-1)\times0.2)\times0.1 \\
+&+(rand()\%20-10) / 100 \\
+\end{aligned}
+$$
+
+其中$SRV$为发球属性、$CFD$为自信属性、$CON$为专注属性、$PRS$为抗压属性、$STM$为耐力属性。  
+$SIT$为局势参数，当领先大于2分时，$SIT$为$0.3$，落后大于2分时，$SIT$为$0.7$，否则为$0.5$。  
+$matchNum$为比赛局数。
+
+决策结果：
+$$
+result=
+\begin{cases}
+aggresive\_serve & Q > AGGRESSIVE\_SERVE\_THRESHOLD \\
+stable\_serve & Q \leq AGGRESSIVE\_SERVE\_THRESHOLD
+\end{cases}
+$$
+其中$AGGRESSIVE\_SERVE\_THRESHOLD$为发球决策阈值，可在config.h中调整。
+
+**2.发球强度计算：**
+
+影响系数$adj$
+$$
+\begin{aligned}
+adj&=1.0 \times \sqrt[4]{(STM/100)} \times (1.0-(matchNum-1)\times 0.1) \\ 
+&\times(0.85+0.3\times PRS / 100) \\ 
+&\times (0.9 + 0.2\times CON / 100) \\
+&\times (1.0+(rand()\%20-10) / 100)
+\end{aligned}
+$$
+
+$$adj=\max(adj,0.3)$$
+
+发球强度$power$
+
+$$
+power=
+\begin{cases}
+SEV\times BASIC\_POWER \times(0.8+0.2\times adj) & stable\_serve \\
+SEV\times BASIC\_POWER \times adj & aggressive\_serve
+\end{cases}
+$$
+
+其中
+$$
+BASIC\_POWER=
+\begin{cases}
+0.7 & stable\_serve \\
+1.2 & aggressive\_serve
+\end{cases}
+$$
+$BASIC\_POWER$数值可在config.h中调整
+
+**3.发球失误率计算**
+
+$$fault=BASIC\_FAULT \times (2.0-adj) \times (SEV / 100) \times 0.5$$
+$$fault=\max(0.05, \min(0.8, fault))$$
+其中
+$$
+BASIC\_FAULT=
+\begin{cases}
+0.15 & stable\_serve \\
+0.3 & aggressive\_serve
+\end{cases}
+$$
+$BASIC\_FAULT$数值可在config.h中调整
+
+### 二、接一部分
+
+**1.接一球员选择**
+
+当且仅当接应在3号位时，后排三人接一，否则为后排四人接一。三人接一为双主攻+自由人，四人接一为双主攻+自由人+接应。
+
+90%概率由后排接一的随机一名球员接一；  
+10%概率由前排副攻接一。
+
+**2.接一成功率计算**
+
+影响系数$adj$
+$$
+\begin{aligned}
+adj&=1.0 \times \sqrt[4]{(STM/100)} \times (1.0-(matchNum-1)\times 0.1) \\
+&\times(0.85+0.3\times PRS / 100) \\
+&\times (0.9 + 0.2\times CON / 100) \\
+&\times (0.9 + 0.2\times TMW / 100) \\
+&\times (1.0+(rand()\%20-10) / 100)
+\end{aligned}
+$$
+
+$$adj=\max(adj,0.3)$$
+
+其中，$TMW$为团队协助属性。
+
+接一成功率$succ$
+$$
+\begin{aligned}
+succ&=DEF \times (1 + 0.4 \times adj) / 100 \\
+&\times(1 - power / 100) \\
+&+ (rand()\% 5 - 10) / 100 \\
+\end{aligned}
+$$
+
+$$succ = \max(0, \min(1, succ))$$
+
+其中，$DEF$为防守属性，$power$为发球强度。
+
+**3.接一结果**
+$$
+result=
+\begin{cases}
+perfect & random < succ\times 0.2 \\
+good & succ\times 0.2 \leq random < succ\times 0.7 \\
+bad & succ\times 0.7 \leq random < succ \\
+fault & succ \leq random
+\end{cases}
+$$
+
+接一质量值$qua$
+$$
+qua=
+\begin{cases}
+90 + rand() \% 11 & perfect \\
+70 + rand() \% 20 & good \\
+40 + rand() \% 30 & bad \\
+0 & fault
+\end{cases}
+$$
+
+### 三、二传部分
+
+### 四、扣球部分
+
+### 五、拦网部分
+
+### 六、防守部分
+
 ## 更新日志
 
 #### 25.12.2 by yaorz26

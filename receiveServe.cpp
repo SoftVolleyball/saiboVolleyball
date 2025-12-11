@@ -11,10 +11,15 @@
 #include "mentalCalculation.h"
 
 
+ReceiveServe::ReceiveServe(const GameState &game, int receivingTeam, int serveEffectiveness)
+    :game(game), receivingTeam(receivingTeam), serveEffectiveness(serveEffectiveness) {
+}
+
+
 // 获取接一阵型
-ReceiveFormation getReceiveFormation(const GameState& game, int teamID) {
-    const int* rotate = (teamID == 0) ? game.rotateA : game.rotateB;
-    const Player* team = (teamID == 0) ? teamA : teamB;
+ReceiveFormation ReceiveServe::getReceiveFormation() {
+    const int* rotate = (receivingTeam == 0) ? game.rotateA : game.rotateB;
+    const Player* team = (receivingTeam == 0) ? teamA : teamB;
 
     // 检查接应是否在3号位（前排中间）
     // 轮转位置索引：0=1号位, 1=2号位, 2=3号位, 3=4号位, 4=5号位, 5=6号位
@@ -45,9 +50,9 @@ ReceiveFormation getReceiveFormation(const GameState& game, int teamID) {
 }
 
 // 获取接一球员列表
-std::vector<int> getReceivePlayers(const GameState& game, int teamID, ReceiveFormation formation) {
-    const int* rotate = (teamID == 0) ? game.rotateA : game.rotateB;
-    const Player* team = (teamID == 0) ? teamA : teamB;
+std::vector<int> ReceiveServe::getReceivePlayers(ReceiveFormation formation) {
+    const int* rotate = (receivingTeam == 0) ? game.rotateA : game.rotateB;
+    const Player* team = (receivingTeam == 0) ? teamA : teamB;
     std::vector<int> receivePlayers;
 
     // 定义场上位置对应的角色
@@ -91,11 +96,11 @@ std::vector<int> getReceivePlayers(const GameState& game, int teamID, ReceiveFor
 }
 
 // 选择接一球员
-Player selectReceivePlayer(const GameState& game, int teamID, ReceiveFormation formation) {
-    const int* rotate = (teamID == 0) ? game.rotateA : game.rotateB;
-    const Player* team = (teamID == 0) ? teamA : teamB;
+Player ReceiveServe::selectReceivePlayer(ReceiveFormation formation) {
+    const int* rotate = (receivingTeam == 0) ? game.rotateA : game.rotateB;
+    const Player* team = (receivingTeam == 0) ? teamA : teamB;
 
-    std::vector<int> receivePlayers = getReceivePlayers(game, teamID, formation);
+    std::vector<int> receivePlayers = getReceivePlayers(formation);
 
     // 90%概率发向后排接一球员，10%概率发向前排
     double frontRowProbability = 0.1;
@@ -139,7 +144,7 @@ Player selectReceivePlayer(const GameState& game, int teamID, ReceiveFormation f
 }
 
 // 计算接一调整系数
-double calculateReceiveAdjustment(const Player& receiver, const GameState& game) {
+double ReceiveServe::calculateReceiveAdjustment(const Player& receiver) {
     // 使用新的辅助函数
     auto adjustments = calculatePlayerStateAdjustments(receiver, game, 1.0, 1.0, 1.0, 1.0, 0.1);
     double finalAdjustment = std::max(0.3, adjustments.totalAdjustment);
@@ -159,9 +164,9 @@ double calculateReceiveAdjustment(const Player& receiver, const GameState& game)
 }
 
 // 计算接一质量
-ReceiveQuality calculateReceiveQuality(const Player& receiver, int serveEffectiveness, const GameState& game, int& qualityValue) {
+ReceiveQuality ReceiveServe::calculateReceiveQuality(const Player& receiver, int& qualityValue) {
     // 计算接一基础能力
-    double adjustment = calculateReceiveAdjustment(receiver, game);
+    double adjustment = calculateReceiveAdjustment(receiver);
     double baseReceiveAbility = receiver.defense * (1 + 0.4 * adjustment);
 
     // 发球强度影响接一难度
@@ -226,7 +231,7 @@ ReceiveQuality calculateReceiveQuality(const Player& receiver, int serveEffectiv
 }
 
 // 模拟接一过程
-ReceiveResult simulateReceive(const GameState& game, int receivingTeam, int serveEffectiveness) {
+ReceiveResult ReceiveServe::simulate() {
     ReceiveResult result;
 
     #if DEBUG_RECEIVE
@@ -236,13 +241,13 @@ ReceiveResult simulateReceive(const GameState& game, int receivingTeam, int serv
     #endif
 
     // 确定接一阵型
-    ReceiveFormation formation = getReceiveFormation(game, receivingTeam);
+    ReceiveFormation formation = getReceiveFormation();
 
     // 选择接一球员
-    result.receiver = selectReceivePlayer(game, receivingTeam, formation);
+    result.receiver = selectReceivePlayer(formation);
 
     // 计算接一质量
-    result.quality = calculateReceiveQuality(result.receiver, serveEffectiveness, game, result.qualityValue);
+    result.quality = calculateReceiveQuality(result.receiver, result.qualityValue);
 
     // 设置接一结果描述
     switch (result.quality) {

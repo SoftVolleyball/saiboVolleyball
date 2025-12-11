@@ -7,7 +7,7 @@
 // 添加调试信息标志
 
 Serve::Serve(const Player& server, const GameState& game)
-    : server(server), game(game), adjustment(0.0) {
+    : server(server), game(game), adjustment(1.0) {
 }
 
 ServeType Serve::decideServeStrategy() {
@@ -113,16 +113,16 @@ int Serve::calculateServePower() {
     switch(serveType) {
         case STABLE_SERVE:
             // 稳定发球：中等强度，受调整影响较小
-            finalPower = static_cast<int>(basePower * 0.7 * (0.8 + 0.2 * adjustment));
+            finalPower = static_cast<int>(basePower * STABLE_SERVE_POWER_RATE * (0.8 + 0.2 * adjustment));
             #if DEBUG_SERVE
-            std::cout << "\n稳定发球: 基础强度" << basePower << " * 0.7 * (" << 0.8 << " + 0.2*" << adjustment << ") = " << finalPower << std::endl;
+            std::cout << "\n稳定发球: 基础强度" << basePower << " * " << STABLE_SERVE_POWER_RATE << " * (" << 0.8 << " + 0.2*" << adjustment << ") = " << finalPower << std::endl;
             #endif
             return finalPower;
         case AGGRESSIVE_SERVE:
             // 冲发球：高强度，受调整影响较大
-            finalPower = static_cast<int>(basePower * 1.2 * adjustment);
+            finalPower = static_cast<int>(basePower * AGGRESSIVE_SERVE_POWER_RATE * adjustment);
             #if DEBUG_SERVE
-            std::cout << "\n冲发球: 基础强度" << basePower << " * 1.2 * " << adjustment << " = " << finalPower << std::endl;
+            std::cout << "\n冲发球: 基础强度" << basePower << " * " << AGGRESSIVE_SERVE_POWER_RATE << " * " << adjustment << " = " << finalPower << std::endl;
             #endif
             return finalPower;
         default:

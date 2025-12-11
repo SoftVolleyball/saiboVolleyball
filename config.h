@@ -16,7 +16,7 @@
 // ============ 全局调试开关 ============
 // 设为1启用调试信息，设为0禁用
 
-#define DEBUG_ALL 0  // 主开关，设为1启用所有调试信息
+#define DEBUG_ALL 1  // 主开关，设为1启用所有调试信息
 
 // 各模块调试开关
 #define DEBUG_BLOCK (DEBUG_ALL || 0)       // 拦网模块
@@ -57,6 +57,11 @@
 #define STABLE_SERVE_BASIC_FAULT_RATE 0.15
 //冲发球基础失误率
 #define AGGRESSIVE_SERVE_BASIC_FAULT_RATE 0.3
+
+//稳定发球基础倍率
+#define STABLE_SERVE_POWER_RATE 0.7
+//冲发球基础倍率
+#define AGGRESSIVE_SERVE_POWER_RATE 1.2
 
 // ------------ 接一部分 ------------
 

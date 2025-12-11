@@ -32,12 +32,35 @@ enum ReceiveFormation {
     FORMATION_3_PLAYER   // 3人接一
 };
 
+class ReceiveServe {
+private:
+    const GameState& game;
+    int receivingTeam;
+    int serveEffectiveness;
+
+
+    std::vector<int> getReceivePlayers(ReceiveFormation formation);
+    Player selectReceivePlayer(ReceiveFormation formation);
+
+    ReceiveQuality calculateReceiveQuality(const Player& receiver, int& qualityValue);
+
+    double calculateReceiveAdjustment(const Player& receiver);
+
+public:
+    ReceiveServe(const GameState& game, int receivingTeam, int serveEffectiveness);
+
+    ReceiveResult simulate();
+
+    ReceiveFormation getReceiveFormation();
+
+};
+
 // 函数声明
-ReceiveResult simulateReceive(const GameState& game, int receivingTeam, int serveEffectiveness);
-ReceiveFormation getReceiveFormation(const GameState& game, int teamID);
-std::vector<int> getReceivePlayers(const GameState& game, int teamID, ReceiveFormation formation);
-Player selectReceivePlayer(const GameState& game, int teamID, ReceiveFormation formation);
-ReceiveQuality calculateReceiveQuality(const Player& receiver, int serveEffectiveness, const GameState& game, int& qualityValue);
+// ReceiveResult simulateReceive(const GameState& game, int receivingTeam, int serveEffectiveness);
+// ReceiveFormation getReceiveFormation(const GameState& game, int teamID);
+// std::vector<int> getReceivePlayers(const GameState& game, int teamID, ReceiveFormation formation);
+// Player selectReceivePlayer(const GameState& game, int teamID, ReceiveFormation formation);
+// ReceiveQuality calculateReceiveQuality(const Player& receiver, int serveEffectiveness, const GameState& game, int& qualityValue);
 
 
 
