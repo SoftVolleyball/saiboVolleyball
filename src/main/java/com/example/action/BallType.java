@@ -1,0 +1,9 @@
+package com.example.action;
+
+public enum BallType {
+    SERVE, JUMP_SERVE, FLOAT_SERVE, JUMP_FLOAT_SERVE,
+    PASS, BAD_PASS, OVER_PASS, FAILED_PASS,
+    SET, ONE_PASS_ATTACK, OVER_SET, BAD_SET,
+    SPIKE, UNDER_NET, OUT_BALL,
+    BLOCK,
+}
