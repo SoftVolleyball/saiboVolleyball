@@ -10,7 +10,6 @@ import static java.lang.Math.pow;
 
 public class Player {
     private final String name;
-    private final int number; //号码
 
     //技术熟练(0-100)
     private final int serve;  //发
@@ -34,12 +33,11 @@ public class Player {
     Random random = new Random();
     NormalDistribution normalDistribution = new NormalDistribution();
 
-    public Player (String name, int number,
+    public Player (String name,
                    int serve, int pass, int set, int spike, int block,
                    int strength, int reliable, int flexibility, int height,
                    int stamina, int mentality) {
         this.name = name;
-        this.number = number;
 
         this.serve = serve;
         this.pass = pass;
@@ -60,10 +58,6 @@ public class Player {
 
     public String getName() {
         return name;
-    }
-
-    public int getNumber() {
-        return number;
     }
 
     //发球

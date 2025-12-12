@@ -14,7 +14,7 @@ public class PlayerTest {
     @BeforeClass
     public static void init() {
         for (int i = 0; i <= 100; i += 10) {
-            players.add(new Player(("队员" + i), i,
+            players.add(new Player(("队员" + i),
                     i, i, i, i, i,
                     i, i, i, i,
                     i, i));
@@ -51,6 +51,7 @@ public class PlayerTest {
             Ball ball = player.serve();
             if (ball.distance() < 0) down++;
             if (ball.distance() > 9) out++;
+            player.prepare();
         }
         System.out.println("下网：" + down * 100 / (double)count + "%");
         System.out.println("出界：" + out * 100 / (double)count + "%");
@@ -87,6 +88,8 @@ public class PlayerTest {
                 ball = receiver.pass(ball);
                 if (ball.type() == BallType.FAILED_PASS) fail++;
             }
+            server.prepare();
+            receiver.prepare();
         }
         System.out.println(receiver.getName() + "接飞率：" + ((int) (fail * 10000.0 / over)) / 100.0 + "%");
     }
@@ -120,6 +123,8 @@ public class PlayerTest {
             ball = receiver.pass(ball);
             if (ball.distance() < 0) over++;
             if (ball.distance() > 6) bad++;
+            server.prepare();
+            receiver.prepare();
         }
         System.out.println("bad:" + bad/(double)count);
         System.out.println("over:" + over/(double)count);
@@ -201,6 +206,7 @@ public class PlayerTest {
                     none++;
                     break;
             }
+            blocker.prepare();
         }
         System.out.println("拦截：" + block * 100 / (double)count + "%");
         System.out.println("撑起：" + touch * 100 / (double)count + "%");
