@@ -14,11 +14,14 @@ public class Point {
     private final Lineup servingTeam;
     private final Lineup receivingTeam;
 
+    private final Team winner;
+
     private final Random random = new Random();
 
     public Point(Lineup servingTeam, Lineup receivingTeam) {
         this.servingTeam = servingTeam;
         this.receivingTeam = receivingTeam;
+        winner = score();
     }
 
     private Team score() {
@@ -94,7 +97,8 @@ public class Point {
                     continue;
 
                 case BAD_PASS:
-                    while (setter == null || setter == passer) setter = possessionTeam.getPlayer(random.nextInt(6) + 1);
+                    while (setter == null || setter == passer)
+                        setter = possessionTeam.getPlayer(random.nextInt(6) + 1);
                     ball = setter.pass(ball);
                     break;
 
@@ -141,10 +145,16 @@ public class Point {
                 case PASS:
                 case SET:
                     int position_ = 0;
-                    ArrayList<Player> players = ball.distance() < 3 ? possessionTeam.getFront() : possessionTeam.getBack();
+                    ArrayList<Player> players = ball.distance() < 3 ?
+                            possessionTeam.getFront() : possessionTeam.getBack();
                     while (spiker == null || spiker == setter || possessionTeam.getTeam().getRole(spiker) == Role.L) {
-                        position_ = random.nextInt(6) + 1;
-                        spiker = possessionTeam.getPlayer(position_);
+                        spiker = players.get(random.nextInt(players.size()));
+                    }
+                    for (int i = 1; i <= 6; i++) {
+                        if (possessionTeam.getPlayer(i) == spiker) {
+                            position_ = i;
+                            break;
+                        }
                     }
                     ball = spiker.spike(ball, position_, possessionTeam.getTeam().getRole(spiker));
                     break;
@@ -161,5 +171,9 @@ public class Point {
                     return possessionTeam.getTeam();
             }
         }
+    }
+
+    public Team getWinner() {
+        return winner;
     }
 }
