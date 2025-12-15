@@ -121,6 +121,14 @@ public class Lineup {
         return false;
     }
 
+    public Team getTeam() {
+        return team;
+    }
+
+    public Player getPlayer(int position) {
+        return this.position[position];
+    }
+
     public Player getSetter() {
         return setter;
     }

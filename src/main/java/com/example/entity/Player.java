@@ -287,7 +287,7 @@ public class Player {
             //距离
             double distance = deviation(4.5, 4.5, ball.power(), ball.disruptiveness());
 
-            BallType type = (power < 0 || disruptiveness < 0) ? BallType.OUT_BALL : BallType.PASS;
+            BallType type = (power < 0 || disruptiveness < 0) ? BallType.OUT_BALL : BallType.OVER_PASS;
 
             //体力减少
             staminaChange(1 - (ball.power() - power) / 10000);
